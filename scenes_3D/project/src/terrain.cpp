@@ -8,13 +8,13 @@ perlin_noise_parameters parameters;
 float evaluate_terrain_height(float x, float y, float terrain_length)
 {
     float z = 0.0f;
-    float h = 70.0f;
-    float p = 500.0f;
-    float sigma = 30.0f;
+    float h = 60.0f;
+    float p = 475.0f;
+    float sigma = 40.0f;
 
     float dist = std::sqrt(std::pow(x, 2) + std::pow(y, 2));
     z = h * std::exp(-std::pow(dist - (p + 10), 2) / (2 * std::pow(sigma, 2)));
-    z += h * std::exp(-std::pow(dist - (p + 100), 2) / (2 * std::pow(sigma, 2)));
+    z += 1.2f * h * std::exp(-std::pow(dist - (p + 150), 2) / (2 * std::pow(sigma, 2)));
 
     float u = x / terrain_length + 0.5f;
     float v = y / terrain_length + 0.5f;

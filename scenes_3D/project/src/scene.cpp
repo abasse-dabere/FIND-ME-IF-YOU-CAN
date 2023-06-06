@@ -60,7 +60,7 @@ void scene_structure::initialize()
 		// with windmill
 		cgp::vec3 center_land0 = cgp::vec3{40.0f, 40.0f, 0.0f};
 		float scalew = scale * 3;
-		create_object_land0(windmill0, rock0, tree0, grass, N_herbe, shader_illumination, shader_grass, center_land0, scalew, bLand0);
+		create_object_land0(windmill0, rock0, tree0, golden_egg_md, golden_egg.position, golden_egg.min_dist, grass, N_herbe, shader_illumination, shader_grass, center_land0, scalew, bLand0);
 
 		// with liberty statue
 		float scale_land1 = scale * 1.5f;
@@ -89,15 +89,24 @@ void scene_structure::initialize()
 		target.texture.load_and_initialize_texture_2d_on_gpu("assets/target/target_model_0.png");
 		target.shader = shader_mesh;
 
-		cgp::vec3 center_land3 = cgp::vec3{-120, 100.0f, 0.0f};
+		cgp::vec3 center_land3 = cgp::vec3{-171, 84.0f, 0.0f};
 		create_object_land3(rocket_platform, rocket, 10, center_land3, shader_illumination, scale, bLand3);
 
-		for (size_t i = 0; i < 100; i++)
+		for (size_t i = 0; i < 10; i++)
 		{
 			birds_structure bird;
 			bird.initialize();
 			birds.push_back(bird);
 		}
+
+		mesh japan_land_mesh = mesh_load_file_obj("assets/blender_obj/Land/japan_land/finaljapon.obj");
+		japan_land.initialize_data_on_gpu(japan_land_mesh);
+		japan_land.texture.load_and_initialize_texture_2d_on_gpu("assets/blender_obj/Land/japan_land/texture2.png", GL_REPEAT, GL_REPEAT);
+		japan_land.model.scaling = 7;
+		japan_land.model.rotation = rotation_transform::from_axis_angle({1, 0, 0}, 3.14f / 2.0f);
+		japan_land.model.translation = cgp::vec3{5.0f, 5.0f, -250.0f};
+		japan_land.shader = shader_illumination;
+		bJapanLand = true;
 	}
 
 	///
@@ -131,6 +140,7 @@ void scene_structure::display_frame()
 		birds[i].display(environment, timer.t);
 	}
 	//
+	draw(golden_egg_md, environment);
 
 	if (bLand0)
 	{
@@ -176,6 +186,15 @@ void scene_structure::display_frame()
 		{
 			draw_wireframe(rocket, environment);
 			draw_wireframe(rocket_platform, environment);
+		}
+	}
+
+	if (bJapanLand)
+	{
+		draw(japan_land, environment);
+		if (gui.display_wireframe)
+		{
+			draw_wireframe(japan_land, environment);
 		}
 	}
 
@@ -252,6 +271,10 @@ void scene_structure::display_gui_objects()
 		ImGui::TextDisabled("Torch");
 	else
 		ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Torch");
+	if (golden_egg.find)
+		ImGui::TextDisabled("Golden egg");
+	else
+		ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Golden egg");
 
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Signature");
 	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Big fish");
@@ -324,6 +347,12 @@ void scene_structure::keyboard_event()
 					show_congrats = true;
 				}
 			}
+
+			// std::cout << "hidden :" << count << std::endl;
+			// std::cout << "alpha :" << alpha << std::endl;
+			// std::cout << "dist_to_camera :" << dist_to_camera << std::endl;
+
+			// std::cout << std::endl;
 			count++;
 		}
 	}

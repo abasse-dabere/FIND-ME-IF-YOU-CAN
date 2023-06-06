@@ -12,8 +12,11 @@
 
 void create_object_land0(cgp::hierarchy_mesh_drawable &windmill0,
                          cgp::mesh_drawable &rock0,
-                         cgp::mesh_drawable &tree0,
-                         cgp::mesh_drawable &tree2,
+                         cgp::mesh_drawable &tree,
+                         cgp::mesh_drawable &golden_egg_md,
+                         cgp::vec3 &egg_position,
+                         float &egg_min_dist,
+                         cgp::mesh_drawable &grass,
                          long const &N_herbe,
                          cgp::opengl_shader_structure const &shader_illumination,
                          cgp::opengl_shader_structure const &shader_grass,

@@ -4,6 +4,9 @@ using namespace cgp;
 void create_object_land0(cgp::hierarchy_mesh_drawable &windmill0,
                          cgp::mesh_drawable &rock0,
                          cgp::mesh_drawable &tree,
+                         cgp::mesh_drawable &golden_egg_md,
+                         cgp::vec3 &egg_position,
+                         float &egg_min_dist,
                          cgp::mesh_drawable &grass,
                          long const &N_herbe,
                          cgp::opengl_shader_structure const &shader_illumination,
@@ -37,7 +40,7 @@ void create_object_land0(cgp::hierarchy_mesh_drawable &windmill0,
     herbe.apply_scaling_to_position(scale * 30);
     grass.initialize_data_on_gpu(herbe);
     grass.texture.load_and_initialize_texture_2d_on_gpu("assets/grass/Grass.png");
-    grass.shader.load("shaders/mesh_grass/mesh_grass.vert.glsl", "shaders/mesh_grass/mesh_grass.frag.glsl");
+    grass.shader = shader_grass;
     // grass.model.scaling = scale * 5;
     grass.model.rotation = rotation_transform::from_axis_angle({1, 0, 0}, 3.14f / 2.0f);
     grass.model.translation = center;
@@ -58,6 +61,13 @@ void create_object_land0(cgp::hierarchy_mesh_drawable &windmill0,
     // grass.model.translation = cgp::vec3{-a / 2, b / 3, 0} + center;
     grass.shader = shader_grass;
     // grass.model.scaling = 10;
+
+    cgp::vec3 egg_center = cgp::vec3{61, 51, 0};
+    golden_egg_md.initialize_data_on_gpu(mesh_primitive_ellipsoid({4, 2, 2}, egg_center));
+    golden_egg_md.material.color = {214 / 256.0f, 165 / 256.0f, 62 / 256.0f};
+    egg_position = egg_center;
+    egg_min_dist = 17;
+
     bLand0 = true;
     std::cout << "create_object_land0" << std::endl;
 }
@@ -221,7 +231,7 @@ void create_object_water(cgp::mesh_drawable &water,
         float pos_y = rand_interval(-1000, 1000);
 
         float dist = std::sqrt(std::pow(pos_x, 2) + std::pow(pos_y, 2));
-        if (dist > 460 && dist < 900)
+        if (dist > 450 && dist < 700)
         {
             mesh rd_tree = create_tree_model_2(8);
             rd_tree.apply_translation_to_position({pos_x, pos_y, evaluate_terrain_height(pos_x, pos_y, terrain_length)});

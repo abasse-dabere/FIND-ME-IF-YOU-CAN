@@ -107,6 +107,9 @@ struct scene_structure : cgp::scene_inputs_generic
 	mesh_drawable rocket;
 	bool bLand3 = false;
 
+	mesh_drawable japan_land;
+	bool bJapanLand = false;
+
 	mesh_drawable libertystatue;
 	hidden_object torch;
 
@@ -115,7 +118,10 @@ struct scene_structure : cgp::scene_inputs_generic
 
 	mesh_drawable target;
 
-	std::vector<hidden_object *> hidden_objects = {&painting, &torch};
+	mesh_drawable golden_egg_md;
+	hidden_object golden_egg;
+
+	std::vector<hidden_object *> hidden_objects = {&painting, &torch, &golden_egg};
 	bool show_congrats = false;
 	long fps_congrats = 0;
 

@@ -37,7 +37,6 @@ void birds_structure::initialize()
 void birds_structure::display(environment_structure &environment, float time)
 {
 	interpolation(curr_idx, time, key_positions, key_times, pos, der);
-	bird_md["base"].transform_local.translation = pos;
 	if (std::abs(der.x) < 100 && std::abs(der.x) > 0.001 && std::abs(der.y) < 100 && std::abs(der.y) > 0.001)
 		bird_md["base"].transform_local.rotation = rotation_transform::from_vector_transform({1, 0, 0}, cgp::normalize(cgp::vec3{der.x, der.y, 0}));
 
@@ -49,6 +48,7 @@ void birds_structure::display(environment_structure &environment, float time)
 	bird_md["aile_d1"].transform_local.rotation = rotation_transform::from_axis_angle({1, 0, 0}, -0.5f * std::sin(time * 5));
 	bird_md["aile_d1"].transform_local.translation = {0, -2.0f, 0};
 
+	bird_md["base"].transform_local.translation = pos;
 	bird_md.update_local_to_global_coordinates();
 
 	draw(bird_md, environment);

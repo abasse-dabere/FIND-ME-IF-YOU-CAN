@@ -28,11 +28,12 @@ namespace cgp
         vec3 move_front = front - dot(front, up) * up;
         vec3 move_right = right - dot(right, up) * up;
 
+        long limit = 3055;
         if (inputs->keyboard.up || inputs->keyboard.is_pressed(GLFW_KEY_W))
-            if (cgp::norm(camera_model.position_camera + magnitude * move_front) < 355)
+            if (cgp::norm(camera_model.position_camera + magnitude * move_front) < limit)
                 camera_model.position_camera += magnitude * move_front;
         if (inputs->keyboard.down || inputs->keyboard.is_pressed(GLFW_KEY_S))
-            if (cgp::norm(camera_model.position_camera - magnitude * move_front) < 355)
+            if (cgp::norm(camera_model.position_camera - magnitude * move_front) < limit)
                 camera_model.position_camera -= magnitude * move_front;
         if (inputs->keyboard.left || inputs->keyboard.is_pressed(GLFW_KEY_A))
             camera_model.manipulator_rotate_roll_pitch_yaw(0, 0, turn_mag * 0.01);
