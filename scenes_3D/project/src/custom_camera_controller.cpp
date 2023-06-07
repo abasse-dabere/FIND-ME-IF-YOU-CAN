@@ -28,7 +28,7 @@ namespace cgp
         vec3 move_front = front - dot(front, up) * up;
         vec3 move_right = right - dot(right, up) * up;
 
-        long limit = 3055;
+        long limit = 300;
         if (inputs->keyboard.up || inputs->keyboard.is_pressed(GLFW_KEY_W))
             if (cgp::norm(camera_model.position_camera + magnitude * move_front) < limit)
                 camera_model.position_camera += magnitude * move_front;

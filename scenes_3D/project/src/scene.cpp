@@ -14,8 +14,8 @@ void scene_structure::initialize()
 	camera_control.set_rotation_axis_z(); // camera rotates around z-axis
 	//   look_at(camera_position, targeted_point, up_direction)
 	camera_control.look_at(
-		{-153.0f, 107.0f, 15.0f} /* position of the camera in the 3D scene */,
-		{38.0f, -52.0f, 15.0f} /* targeted point in 3D scene */,
+		{-196.0f, 226.0f, 15.0f} /* position of the camera in the 3D scene */,
+		{-44.0f, 89.0f, 15.0f} /* targeted point in 3D scene */,
 		{0, 0, 1} /* direction of the "up" vector */);
 	//{-0.5f, 34.0f, 15.0f}
 	// Create the global (x,y,z) frame
@@ -53,9 +53,13 @@ void scene_structure::initialize()
 		project::path + "shaders/mesh_grass/mesh_grass.frag.glsl");
 	// Create the shapes seen in the 3D scene
 	bool display = true;
+
 	if (display)
 	{
-		create_object_water(water, fwater, fishes, N_fishes, fwater_trees, shader_water, shader_illumination, shader_fishes, bWater);
+		cube_c.initialize_data_on_gpu(mesh_primitive_cube());
+		cube_c.model.scaling = 3;
+
+		create_object_water(water, fwater, fwater_trees, shader_water, shader_illumination, shader_fishes, bWater);
 
 		// with windmill
 		cgp::vec3 center_land0 = cgp::vec3{40.0f, 40.0f, 0.0f};
@@ -73,15 +77,13 @@ void scene_structure::initialize()
 		// with house
 		float scale_land2 = scale * 3.0f;
 		cgp::vec3 center_land2 = cgp::vec3{-90.0f, -70.0f, 0.0f} * scale_land2;
-		create_object_land2(rock2, house_model_0, painting.position, painting.min_dist, center_land2, shader_illumination, scale_land2, bLand2);
+		create_object_land2(rock2, house_model_0, trees_land2, painting.position, painting.min_dist, center_land2, shader_illumination, scale_land2, bLand2);
 
-		sun.initialize_data_on_gpu(mesh_primitive_sphere(15.0f));
+		sun.initialize_data_on_gpu(mesh_primitive_sphere(20.0f));
 		sun.material.color = gui.light_color;
-		sun.material.phong.specular = 0.0f;
+		sun.material.phong.specular = 0.7f;
 		sun.material.phong.diffuse = 1.0f;
 		// sun.shader = shader_illumination;
-		world.initialize_data_on_gpu(mesh_primitive_sphere(400.0f));
-		world.material.color = cgp::vec3{135 / 256.0f, 206 / 256.0f, 235 / 256.0f};
 
 		float l = 0.1f;
 		mesh quad_mesh = mesh_primitive_quadrangle({-l / 2.0f, 0, 0}, {l / 2.0f, 0, 0}, {l / 2.0f, 0, l}, {-l / 2.0f, 0, l});
@@ -92,7 +94,7 @@ void scene_structure::initialize()
 		cgp::vec3 center_land3 = cgp::vec3{-171, 84.0f, 0.0f};
 		create_object_land3(rocket_platform, rocket, 10, center_land3, shader_illumination, scale, bLand3);
 
-		for (size_t i = 0; i < 10; i++)
+		for (size_t i = 0; i < N_birds; i++)
 		{
 			birds_structure bird;
 			bird.initialize();
@@ -107,6 +109,13 @@ void scene_structure::initialize()
 		japan_land.model.translation = cgp::vec3{5.0f, 5.0f, -250.0f};
 		japan_land.shader = shader_illumination;
 		bJapanLand = true;
+
+		for (size_t i = 0; i < N_fishes; i++)
+		{
+			fishes_structure fish;
+			fish.initialize();
+			fishes.push_back(fish);
+		}
 	}
 
 	///
@@ -124,8 +133,7 @@ void scene_structure::display_frame()
 	environment.uniform_generic.uniform_float["specular_exp"] = gui.specular_exp;
 	environment.uniform_generic.uniform_vec3["light_color"] = gui.light_color;
 	environment.background_color = gui.background_color;
-	gui.light0_position = {-10.0f, 550 * std::sin(0.1 * timer.t), 550 * std::cos(0.1 * timer.t)};
-
+	gui.light0_position = {-10.0f, 550 * std::sin(0.05 * timer.t), 550 * std::abs(std::cos(0.05 * timer.t))};
 	environment.uniform_generic.uniform_vec3["light0_position"] = gui.light0_position;
 	environment.uniform_generic.uniform_vec3["light1_position"] = camera_control.camera_model.position();
 
@@ -134,12 +142,17 @@ void scene_structure::display_frame()
 	// Update time
 	timer.update();
 
+	// draw(cube_c, environment);
+
 	// birds
 	for (size_t i = 0; i < birds.size(); i++)
-	{
 		birds[i].display(environment, timer.t);
-	}
-	//
+
+	// fishes
+	for (size_t i = 0; i < fishes.size(); i++)
+		fishes[i].display(environment, timer.t);
+
+	// goldenegg
 	draw(golden_egg_md, environment);
 
 	if (bLand0)
@@ -170,11 +183,13 @@ void scene_structure::display_frame()
 	if (bLand2)
 	{
 		draw(house_model_0, environment);
+		draw(trees_land2, environment);
 		draw(rock2, environment);
 		if (gui.display_wireframe)
 		{
 			draw_wireframe(rock2, environment);
 			draw_wireframe(house_model_0, environment);
+			draw_wireframe(trees_land2, environment);
 		}
 	}
 
@@ -200,14 +215,14 @@ void scene_structure::display_frame()
 
 	if (bWater)
 	{
-		draw(fishes, environment, N_fishes);
 		draw(fwater, environment);
 		draw(fwater_trees, environment);
 		draw(water, environment);
 		if (gui.display_wireframe)
 		{
-			draw_wireframe(water, environment);
 			draw_wireframe(fwater, environment);
+			draw_wireframe(fwater_trees, environment);
+			draw_wireframe(water, environment);
 		}
 	}
 
@@ -276,9 +291,6 @@ void scene_structure::display_gui_objects()
 	else
 		ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Golden egg");
 
-	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Signature");
-	ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Big fish");
-
 	ImGui::End();
 }
 
@@ -341,7 +353,7 @@ void scene_structure::keyboard_event()
 					it->find = true;
 					show_congrats = true;
 				}
-				else if (alpha < 0.1f)
+				else if (alpha < 0.2f)
 				{
 					it->find = true;
 					show_congrats = true;

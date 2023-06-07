@@ -8,6 +8,7 @@
 #include "create_objects.hpp"
 
 #include "birds_structure.hpp"
+#include "fishes_structure.hpp"
 
 #include <string>
 
@@ -68,18 +69,17 @@ struct scene_structure : cgp::scene_inputs_generic
 
 	mesh_drawable for_test;
 
-	mesh_drawable world;
+	mesh_drawable cube_c;
 	mesh_drawable sun;
 
 	timer_basic timer;
 	// float scale = 0.32f;
 	float scale = 0.32f;
+	float l_off = 1;
 
 	bool bWater = false;
-	long N_fishes = 5;
 	mesh_drawable water;
 	mesh_drawable fwater;
-	mesh_drawable fishes;
 	mesh_drawable deco_rock0;
 
 	bool bLand0 = false;
@@ -114,6 +114,7 @@ struct scene_structure : cgp::scene_inputs_generic
 	hidden_object torch;
 
 	cgp::hierarchy_mesh_drawable house_model_0;
+	cgp::mesh_drawable trees_land2;
 	hidden_object painting;
 
 	mesh_drawable target;
@@ -125,7 +126,10 @@ struct scene_structure : cgp::scene_inputs_generic
 	bool show_congrats = false;
 	long fps_congrats = 0;
 
+	long N_birds = 5;
+	long N_fishes = 5;
 	std::vector<birds_structure> birds;
+	std::vector<fishes_structure> fishes;
 
 	mesh_drawable fwater_trees;
 	// ****************************** //

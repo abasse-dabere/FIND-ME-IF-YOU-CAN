@@ -50,8 +50,8 @@ void birds_structure::display(environment_structure &environment, float time)
 
 	bird_md["base"].transform_local.translation = pos;
 	bird_md.update_local_to_global_coordinates();
-
-	draw(bird_md, environment);
+	if (pos.z > 75)
+		draw(bird_md, environment);
 }
 
 void create_bird(cgp::hierarchy_mesh_drawable &bird_md)

@@ -24,7 +24,7 @@ void create_object_land0(cgp::hierarchy_mesh_drawable &windmill0,
     windmill0 = create_windmill(scale * 1.5, shader_illumination);
     windmill0["Base"].transform_local.translation += cgp::vec3{a / 2.0f, b / 3.0f, 0.0f} + center;
 
-    mesh tree0_mesh = create_tree_model_0(25.0f * scale);
+    mesh tree0_mesh = create_tree_model_0(7);
     tree0_mesh.apply_translation_to_position(center);
 
     mesh tree1_mesh = create_tree_model_1(7.0f * scale);
@@ -98,6 +98,7 @@ void create_object_land1(cgp::mesh_drawable &rock1,
 
 void create_object_land2(cgp::mesh_drawable &rock2,
                          cgp::hierarchy_mesh_drawable &house_model_0,
+                         cgp::mesh_drawable &trees,
                          cgp::vec3 &painting_position,
                          float &painting_min_dist,
                          cgp::vec3 &center,
@@ -113,6 +114,19 @@ void create_object_land2(cgp::mesh_drawable &rock2,
     rock2.shader = shader_illumination;
 
     house_model_0 = create_house_model_0(15.0f, center, painting_position, painting_min_dist, shader_illumination);
+
+    mesh trees_mesh;
+    cgp::numarray<cgp::vec3> rd_tree_pos = {{-126, -60, 0}, {-104, -77, 0}, {-65, -76, 0}, {-60, -40, 0}};
+    for (cgp::vec3 vec : rd_tree_pos)
+    {
+        mesh rd_tree = create_rd_tree(7, 1, 2, 2);
+        rd_tree.apply_translation_to_position(vec);
+        trees_mesh.push_back(rd_tree);
+    }
+    trees.initialize_data_on_gpu(trees_mesh);
+    trees.material.phong.specular = 0.0f;
+    trees.shader = shader_illumination;
+
     bLand2 = true;
     std::cout << "create_object_land2" << std::endl;
 }
@@ -195,8 +209,6 @@ void create_object_land3(cgp::mesh_drawable &rocket_platform,
 
 void create_object_water(cgp::mesh_drawable &water,
                          cgp::mesh_drawable &fwater,
-                         cgp::mesh_drawable &fishes,
-                         long &N_fishes,
                          cgp::mesh_drawable &trees,
                          cgp::opengl_shader_structure &shader_water,
                          cgp::opengl_shader_structure &shader_illumination,
@@ -222,7 +234,7 @@ void create_object_water(cgp::mesh_drawable &water,
     fwater.shader = shader_illumination;
 
     mesh trees_mesh;
-    long N_rd_tree = 2000;
+    long N_rd_tree = 500;
     cgp::numarray<cgp::vec3> rd_tree_pos(N_rd_tree);
     long trees_count = 0;
     while (trees_count < N_rd_tree)
@@ -233,7 +245,7 @@ void create_object_water(cgp::mesh_drawable &water,
         float dist = std::sqrt(std::pow(pos_x, 2) + std::pow(pos_y, 2));
         if (dist > 450 && dist < 700)
         {
-            mesh rd_tree = create_tree_model_2(8);
+            mesh rd_tree = create_rd_tree(7, 1, 4, 0);
             rd_tree.apply_translation_to_position({pos_x, pos_y, evaluate_terrain_height(pos_x, pos_y, terrain_length)});
             trees_mesh.push_back(rd_tree);
             trees_count++;
@@ -243,31 +255,31 @@ void create_object_water(cgp::mesh_drawable &water,
     // trees.shader = shader_illumination;
     trees.material.phong.specular = 0.0f;
 
-    fishes.initialize_data_on_gpu(mesh_load_file_obj("assets/blender_obj/Fishes/fish_0.obj"));
-    fishes.texture.load_and_initialize_texture_2d_on_gpu("assets/blender_obj/Fishes/fish_0_texture.jpg");
-    fishes.shader = shader_fishes;
+    // fishes.initialize_data_on_gpu(mesh_load_file_obj("assets/blender_obj/Fishes/fish_0.obj"));
+    // fishes.texture.load_and_initialize_texture_2d_on_gpu("assets/blender_obj/Fishes/fish_0_texture.jpg");
+    // fishes.shader = shader_fishes;
 
-    cgp::numarray<cgp::vec3> fishes_pos(N_fishes);
-    long fish_count = 0;
-    while (fish_count < N_fishes)
-    {
-        cgp::vec3 pos = {rand_interval(-l / 10.0f, l / 10.0f), rand_interval(-l / 10.0f, l / 10.0f), 0};
-        bool add = true;
-        for (cgp::vec3 vec : fishes_pos)
-        {
-            if (cgp::norm(pos - vec) < 1.0f)
-            {
-                add = false;
-                break;
-            }
-        }
-        if (add)
-        {
-            fishes_pos[fish_count++] = pos;
-        }
-    }
-    fishes.model.translation = {0, 0, wz - 5.0f};
-    fishes.initialize_supplementary_data_on_gpu(fishes_pos, 4, 1);
+    // cgp::numarray<cgp::vec3> fishes_pos(N_fishes);
+    // long fish_count = 0;
+    // while (fish_count < N_fishes)
+    // {
+    //     cgp::vec3 pos = {rand_interval(-l / 10.0f, l / 10.0f), rand_interval(-l / 10.0f, l / 10.0f), 0};
+    //     bool add = true;
+    //     for (cgp::vec3 vec : fishes_pos)
+    //     {
+    //         if (cgp::norm(pos - vec) < 1.0f)
+    //         {
+    //             add = false;
+    //             break;
+    //         }
+    //     }
+    //     if (add)
+    //     {
+    //         fishes_pos[fish_count++] = pos;
+    //     }
+    // }
+    // fishes.model.translation = {0, 0, wz - 5.0f};
+    // fishes.initialize_supplementary_data_on_gpu(fishes_pos, 4, 1);
 
     bWater = true;
     std::cout << "create_object_water" << std::endl;
