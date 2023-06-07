@@ -103,17 +103,18 @@ void animation_loop()
 	imgui_create_frame();
 	ImGui::GetIO().FontGlobalScale = project::gui_scale;
 
-	ImGui::Begin("CATCH ME IF YOU CAN !", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+	// ImGui::Begin("CATCH ME IF YOU CAN !", NULL, ImGuiWindowFlags_AlwaysAutoResize);
+
+	// scene.display_gui();
+	scene.display_gui_objects();
+
 	scene.inputs.mouse.on_gui = ImGui::GetIO().WantCaptureMouse;
 	scene.inputs.time_interval = time_interval;
-	scene.display_gui();
 	scene.idle_frame();
 
 	ImGui::SetWindowFontScale(1 / 5.0f);
 	scene.display_frame();
 	ImGui::End();
-
-	scene.display_gui_objects();
 
 	scene.display_gui_bravo();
 

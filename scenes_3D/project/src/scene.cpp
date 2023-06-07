@@ -256,12 +256,6 @@ void scene_structure::display_gui()
 		ImGui::SliderFloat("Specular", &gui.specular, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular Exp", &gui.specular_exp, 0.1f, 256.0f);
 	}
-
-	if (ImGui::CollapsingHeader("Developers"))
-	{
-		ImGui::Text("Abasse DABERE");
-		ImGui::Text("Oumouhanni EL-VILALY");
-	}
 }
 
 void scene_structure::display_gui_objects()
@@ -291,7 +285,11 @@ void scene_structure::display_gui_objects()
 	else
 		ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Golden egg");
 
-	ImGui::End();
+	if (ImGui::CollapsingHeader("Developers"))
+	{
+		ImGui::Text("Abasse DABERE");
+		ImGui::Text("Oumouhanni EL-VILALY");
+	}
 }
 
 void scene_structure::display_gui_bravo()
